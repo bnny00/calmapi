@@ -16,6 +16,110 @@ class MODULE_SINGULAR_PASCALController extends CalmController {
         autoBind( this );
     }
 
+    async getAll(req, res, next) {
+        const user = req.user;
+        req.query[ 'IMO_No' ] = user.IMO_No;
+
+        try {
+            const response = await this.service.getAll(req.query);
+            res.sendCalmResponse(response.data, { totalCount: response.total });
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    async get(req, res, next) {
+        const { id } = req.params;
+        try {
+            const response = await this.service.get(id);
+            res.sendCalmResponse(new this.dto.GetDTO(response.data));
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    async insert(req, res, next) {
+        try {
+            
+            if (req.user.Role === 'reader') {
+                throw new CalmError('PERMISSION_DENIED_ERROR');
+            }
+
+            if (req.user) {
+                req.body.createdBy = req.user._id;
+            }
+
+            const response = await this.service.insert( req.body, req.user );
+
+            res.sendCalmResponse( response.data );
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    async update(req, res, next) {
+        const { id } = req.params;
+        try {
+            if (req.user.Role === 'reader') {
+                throw new CalmError('PERMISSION_DENIED_ERROR');
+            }
+
+            if (req.user) {
+                req.body.updatedBy = req.user._id;
+            }
+
+            const response = await this.service.update( id, req.body )
+            );
+
+            res.sendCalmResponse( response.data );
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    async delete(req, res, next) {
+        const { id } = req.params;
+        try {
+            if (req.user.Role === 'reader') {
+                throw new CalmError('PERMISSION_DENIED_ERROR');
+            }
+
+            const response = await this.service.delete(id);
+
+            res.sendCalmResponse( response.data ), { deleted: response.deleted });
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    async pdfExport(req, res, next) {
+        const { id } = req.params;
+        const localtz = req.query.timezone || 'UTC';
+        try {
+            
+            const response = await this.service.singleGetForPdf( id );
+            const filterData = new this.dto.PrintDTO( response.data );
+            const parsedData = JSON.parse(JSON.stringify(filterData));
+            const IMO_No = req.user.IMO_No;
+            parsedData.imageUrl = `http://localhost:${config.PORT}/`;
+
+            // Amazon Link
+            parsedData.amazonLink = process.env.BUCKETlINK;
+
+            // Mention Handlebars File Name
+            parsedData.type = '';
+
+            // Pass Local Timzone
+            parsedData.localtz = localtz;
+
+            const fields = [];
+
+        } catch( e ) {
+            next( e );
+        }
+
+    }
+
 }
 
 module.exports = new MODULE_SINGULAR_PASCALController( MODULE_SINGULAR_CAMELService );
