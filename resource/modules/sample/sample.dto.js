@@ -3,8 +3,7 @@
 class GetDTO {
     constructor( { ...props } ) {
         this._id = props._id;
-        this.title = props.title;
-        this.content = props.content;
+        Object.assign(this, props);
 
         // Auto Generated Fields
         this.createdBy = props.createdBy;
@@ -18,8 +17,8 @@ class GetDTO {
 
 class InsertDTO {
     constructor( { ...props } ) {
-        this.title = props.title;
-        this.content = props.content;
+        Object.assign(this, props);
+        
         // Auto Generated Fields
         this.createdBy = props.createdBy;
         Object.freeze( this );
@@ -28,8 +27,7 @@ class InsertDTO {
 
 class UpdateDTO {
     constructor( { ...props } ) {
-        this.title = props.title;
-        this.content = props.content;
+        Object.assign(this, props);
         // Auto Generated Fields
         this.updatedBy = props.updatedBy;
         // Delete Fields which are not present in data
@@ -45,12 +43,10 @@ class UpdateDTO {
 class PrintDTO {
 
     constructor({ ...props }) {
-
         Object.assign(this, props);
 
         // Auto Generated Fields
         this.createdBy = props.createdBy;
-      
         Object.freeze( this );
 
     }
