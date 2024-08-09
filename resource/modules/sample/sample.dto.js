@@ -42,4 +42,20 @@ class UpdateDTO {
     }
 }
 
-module.exports = { GetDTO, InsertDTO, UpdateDTO };
+class PrintDTO {
+
+    constructor({ ...props }) {
+
+        Object.assign(this, props);
+
+        // Auto Generated Fields
+        this.createdBy = props.createdBy;
+      
+        Object.freeze( this );
+
+    }
+
+}
+
+
+module.exports = { GetDTO, InsertDTO, UpdateDTO, PrintDTO };
