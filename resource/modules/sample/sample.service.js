@@ -7,6 +7,51 @@ class MODULE_SINGULAR_PASCALService extends CalmService {
     constructor( model ) {
         super( model );
     }
+
+    async getAll(query) {
+        // eslint-disable-next-line prefer-const
+        let { skip, limit, sortBy, ...restQuery } = query;
+
+        skip = skip ? Number( skip ) : 0;
+        limit = limit ? Number( limit ) : 10;
+        sortBy = sortBy ? sortBy : { 'createdAt': -1 };
+
+        try {
+            const total = await this.model.countDocuments( restQuery );
+
+            if(limit == Number(0)) {
+                return { data: [], total };
+            }
+
+            const item = await this.model.find(restQuery).sort( sortBy ).skip( skip ).limit( limit ).populate( this.populateFields );
+            
+            if( !item ) {
+                throw new Error( 'UNKNOWN_ERROR' );
+            }
+            
+            return { 'data': this.parseObj( item ), total };
+        }catch(errors) {
+            throw errors;
+        }
+    }
+
+    async get( id ) {
+        
+        try {
+
+            const item = await this.model.findById( id ).populate( this.populateFields );
+
+            if( !item ) {
+                throw new Error( 'UNKNOWN_ERROR' );
+            }
+
+            return { 'data': item.toJSON() };
+
+        } catch( errors ) {
+            throw errors;
+        }
+
+    }
 }
 
 module.exports = { MODULE_SINGULAR_PASCALService };
