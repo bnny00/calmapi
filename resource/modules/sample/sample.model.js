@@ -7,14 +7,11 @@ class MODULE_SINGULAR_PASCAL {
 
     initSchema() {
         const schema = new Schema( {
-            'title': {
+            'IMO_No': {
                 'type': String,
                 'required': true,
             },
-            'content': {
-                'type': String,
-                'required': true,
-            },
+            MODULE_SCHEMA,
             'createdBy': {
                 'type': Schema.Types.ObjectId,
                 'ref': 'user'
@@ -22,7 +19,7 @@ class MODULE_SINGULAR_PASCAL {
             'updatedBy': {
                 'type': Schema.Types.ObjectId,
                 'ref': 'user'
-            }
+            },
         }, { 'timestamps': true } );
 
         schema.plugin( uniqueValidator );
