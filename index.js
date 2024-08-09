@@ -9,6 +9,7 @@ const packageInfo = require('./package.json');
 const axios = require('axios');
 const ora = require('ora');
 const chalk = require('chalk');
+const ExcelJs = require('exceljs');
 const moduleGenerator = require('./src/module-generator');
 const text = `
 ░█████╗░░█████╗░██╗░░░░░███╗░░░███╗  ░█████╗░██████╗░██╗
@@ -195,6 +196,33 @@ function getCalmApiJson() {
     };
 }
 
+function generateModel(file) {
+    try {
+        const wb = new ExcelJs.Workbook();
+        await workbook.xlsx.readFile(file);
+
+        const sheet = wb.worksheets[ 0 ];
+        const result = {};
+
+        sheet.eachRow((row, rowNumber) => {
+            if(rowNumber !== 1) {
+                const cellValue = row.getCell(2).value;
+            
+                if (cellValue) {
+                    result[ cellValue ] = {
+                        type: 'String',
+                        required: false,
+                    };
+                }
+            }
+        });
+
+        return result;
+    } catch (e) {
+        console.log(e)
+    }
+}
+
 // eslint-disable-next-line func-style
 async function main() {
     try {
@@ -207,7 +235,13 @@ async function main() {
             if(!isRootFile) {
                 throw new Error('Please Run inside a calmapi Project.');
             }else {
-                await moduleGenerator(argumentsArr[ 2 ]);
+                if( argumentsArr[ 3 ].includes('.xlsx') ) {
+                    await generateModel(argumentsArr[ 3 ])
+                    await moduleGenerator(argumentsArr[ 2 ]);
+                } else {
+                    await moduleGenerator(argumentsArr[ 2 ]);
+                }
+
             }
         }else if(argumentsArr.length === 4 && argumentsArr[ 0 ] === 'generate' && argumentsArr[ 1 ] === 'module' && argumentsArr[ 3 ] === '--force') {
             const isRootFile = fs.readdirSync(CURR_DIR).find(file => file === 'calmapi.json');
