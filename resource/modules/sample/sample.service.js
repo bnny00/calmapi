@@ -52,6 +52,62 @@ class MODULE_SINGULAR_PASCALService extends CalmService {
         }
 
     }
+
+    async insert(data) {
+        try {
+            const item = await this.model.create(data);
+            if ( !item ) {
+                throw new Error('UNKNOWN_ERROR');
+            }
+            return { 'data': item.toJSON() };
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async update(id, data) {
+        try {
+
+            const item = await this.model.findByIdAndUpdate( id, { ...data }, { 'new': true, context: 'query' });
+            if ( !item ) {
+                throw new Error('UNKNOWN_ERROR');
+            }
+            
+            return { 'data': item.toJSON() };
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async delete(id) {
+        try {
+            
+            const item = await this.model.findByIdAndDelete(id);
+            if ( !item ) {
+                throw new Error('UNKNOWN_ERROR');
+            }
+            
+            return { 'data': item.toJSON() };
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async singleGetForPdf( id ) {
+        try {
+            const item = await this.model.findById( id ).populate( this.populateFields );
+            
+            if( !item ) {
+                throw new Error('NOT_FOUND_ERROR');
+            }
+            
+            const parsedItem = JSON.parse(JSON.stringify(item));
+            return { 'data': parsedItem };
+
+        } catch( errors ) {
+            throw errors;
+        }
+    }
 }
 
 module.exports = { MODULE_SINGULAR_PASCALService };
