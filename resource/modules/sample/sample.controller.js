@@ -32,7 +32,7 @@ class MODULE_SINGULAR_PASCALController extends CalmController {
         const { id } = req.params;
         try {
             const response = await this.service.get(id);
-            res.sendCalmResponse(new this.dto.GetDTO(response.data));
+            res.sendCalmResponse( response.data );
         } catch (e) {
             next(e);
         }
@@ -69,7 +69,6 @@ class MODULE_SINGULAR_PASCALController extends CalmController {
             }
 
             const response = await this.service.update( id, req.body )
-            );
 
             res.sendCalmResponse( response.data );
         } catch (e) {
@@ -86,7 +85,7 @@ class MODULE_SINGULAR_PASCALController extends CalmController {
 
             const response = await this.service.delete(id);
 
-            res.sendCalmResponse( response.data ), { deleted: response.deleted });
+            res.sendCalmResponse( response.data, { deleted: response.deleted });
         } catch (e) {
             next(e);
         }
