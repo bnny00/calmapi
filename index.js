@@ -230,7 +230,7 @@ async function main() {
         console.log('argumentsArr-----', argumentsArr);
         if(!argumentsArr.length) {
             await projectGenerator();
-        }else if(argumentsArr.length === 3 && argumentsArr[ 0 ] === 'generate' && argumentsArr[ 1 ] === 'module') {
+        }else if(argumentsArr.length >= 3 && argumentsArr[ 0 ] === 'generate' && argumentsArr[ 1 ] === 'module') {
             const isRootFile = fs.readdirSync(CURR_DIR).find(file => file === 'calmapi.json');
             if(!isRootFile) {
                 throw new Error('Please Run inside a calmapi Project.');
