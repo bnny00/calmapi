@@ -226,6 +226,7 @@ async function generateModel(file) {
 // eslint-disable-next-line func-style
 async function main() {
     try {
+        console.log('argumentsArr 1-----', argumentsArr);
         const argumentsArr = process.argv.slice(2);
         console.log('argumentsArr-----', argumentsArr);
         if(!argumentsArr.length) {
