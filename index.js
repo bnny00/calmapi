@@ -196,7 +196,7 @@ function getCalmApiJson() {
     };
 }
 
-function generateModel(file) {
+async function generateModel(file) {
     try {
         const wb = new ExcelJs.Workbook();
         await workbook.xlsx.readFile(file);
@@ -236,8 +236,8 @@ async function main() {
                 throw new Error('Please Run inside a calmapi Project.');
             }else {
                 if( argumentsArr[ 3 ].includes('.xlsx') ) {
-                    await generateModel(argumentsArr[ 3 ])
-                    await moduleGenerator(argumentsArr[ 2 ]);
+                    const schema = await generateModel(argumentsArr[ 3 ])
+                    await moduleGenerator(argumentsArr[ 2 ], false, schema);
                 } else {
                     await moduleGenerator(argumentsArr[ 2 ]);
                 }

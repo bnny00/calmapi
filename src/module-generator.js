@@ -5,7 +5,7 @@ const pluralize = require('pluralize');
 const chalk = require('chalk');
 const caseChanger = require('case');
 
-module.exports = async function(modulePath, isForce = false) {
+module.exports = async function(modulePath, isForce = false, result = null) {
     try {
         const modulePathArr = modulePath.split('/');
         const finalModulePath = `${CURR_DIR}/src/modules`;
@@ -22,7 +22,10 @@ module.exports = async function(modulePath, isForce = false) {
         fs.mkdirSync(`${moduleDirPath}`);
         console.log(chalk.blueBright('Generating Files'));
         // eslint-disable-next-line no-use-before-define
-        await createDirectoryContents(templatePath, finalModuleName, moduleDirPath);
+        await createDirectoryContents(templatePath, finalModuleName, moduleDirPath, result);
+        if(result) {
+            
+        }
         console.log(chalk.blueBright('Module Generation Complete'));
     } catch (error) {
         if(error.code === 'EEXIST') {
@@ -34,10 +37,16 @@ module.exports = async function(modulePath, isForce = false) {
 };
 
 // eslint-disable-next-line func-style
-async function createDirectoryContents(templatePath, moduleName, moduleWritePath) {
+async function createDirectoryContents(templatePath, moduleName, moduleWritePath, schema) {
     try {
         const filesToCreate = fs.readdirSync(templatePath);
         filesToCreate.forEach((file) => {
+
+            if (file === 'sample.model.js') {
+                createModel(templatePath, moduleName, moduleWritePath, schema);
+                return;
+            }
+
             const origFilePath = `${templatePath}/${file}`;
 
             // get stats about the current file
@@ -64,6 +73,10 @@ async function createDirectoryContents(templatePath, moduleName, moduleWritePath
                         contents = contents.replace(/MODULE_SINGULAR_PASCAL/g, PascalCase);
                         contents = contents.replace(/MODULE_SINGULAR_CAMEL/g, camelCase);
                         contents = contents.replace(/MODULE_SINGULAR_KEBAB/g, kebabCase);
+
+                        if (schema && Object.keys(schema).length > 0) {
+                            contents = contents.replace(/MODULE_SCHEMA/g, JSON.stringify(schema, null, 4));
+                        }
                         // eslint-disable-next-line no-param-reassign
                         file = `${kebabCase}.model.js`;
                         break;
