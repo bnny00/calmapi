@@ -19,7 +19,12 @@ module.exports = async function(modulePath, isForce = false, result = null) {
 
         console.log(chalk.blueBright(`Creating Module: ${finalModuleName}`));
         console.log(chalk.blueBright(`Creating Directory: ${kebabCase}`));
-        fs.mkdirSync(`${moduleDirPath}`);
+        try {
+
+            fs.mkdirSync(`${moduleDirPath}`);
+        } catch (err) {
+            console.log('Already exists directory');
+        }
         console.log(chalk.blueBright('Generating Files'));
         // eslint-disable-next-line no-use-before-define
         await createDirectoryContents(templatePath, finalModuleName, moduleDirPath, result);
@@ -36,17 +41,32 @@ module.exports = async function(modulePath, isForce = false, result = null) {
     }
 };
 
+const modelJsonFormatting = function(schema) {
+    const newSchema = { ...schema, 'IMO_No': {
+        'type': 'String',
+        'required': true,
+    }, 'createdBy': {
+        'type': 'Schema.Types.ObjectId',
+        'ref': 'user'
+    },
+    'updatedBy': {
+        'type': 'Schema.Types.ObjectId',
+        'ref': 'user'
+    } };
+    const jsonSchema = JSON.stringify(newSchema, null, '\t').replace(/\n\t/g, '\n\t\t\t').replace(/\"/g, '\'').replace(/\t/g, '    ');
+
+    // let newschmea = jsonSchema.slice(3, jsonSchema.length - 1);
+
+    // newschmea = `${ newschmea } `;
+
+    return jsonSchema;
+};
+
 // eslint-disable-next-line func-style
 async function createDirectoryContents(templatePath, moduleName, moduleWritePath, schema) {
     try {
         const filesToCreate = fs.readdirSync(templatePath);
         filesToCreate.forEach((file) => {
-
-            if (file === 'sample.model.js') {
-                createModel(templatePath, moduleName, moduleWritePath, schema);
-                return;
-            }
-
             const origFilePath = `${templatePath}/${file}`;
 
             // get stats about the current file
@@ -75,7 +95,7 @@ async function createDirectoryContents(templatePath, moduleName, moduleWritePath
                         contents = contents.replace(/MODULE_SINGULAR_KEBAB/g, kebabCase);
 
                         if (schema && Object.keys(schema).length > 0) {
-                            contents = contents.replace(/MODULE_SCHEMA/g, JSON.stringify(schema, null, 4));
+                            contents = contents.replace(/MODULE_SCHEMA/g, modelJsonFormatting(schema));
                         }
                         // eslint-disable-next-line no-param-reassign
                         file = `${kebabCase}.model.js`;
@@ -102,8 +122,8 @@ async function createDirectoryContents(templatePath, moduleName, moduleWritePath
                         break;
                 }
                 const writePath = `${moduleWritePath}/${file}`;
-                fs.writeFileSync(writePath, contents, 'utf8');
                 console.log(chalk.greenBright(writePath));
+                fs.writeFileSync(writePath, contents, 'utf8');
             }
 
         });

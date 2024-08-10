@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+/* eslint-disable no-irregular-whitespace */
+/* eslint-disable func-style */
 'use strict';
 const inquirer = require('inquirer');
 const CURR_DIR = process.cwd();
@@ -199,7 +201,7 @@ function getCalmApiJson() {
 async function generateModel(file) {
     try {
         const wb = new ExcelJs.Workbook();
-        await workbook.xlsx.readFile(file);
+        await wb.xlsx.readFile(file);
 
         const sheet = wb.worksheets[ 0 ];
         const result = {};
@@ -216,17 +218,17 @@ async function generateModel(file) {
                 }
             }
         });
-
+        
         return result;
     } catch (e) {
-        console.log(e)
+        console.log(e);
     }
 }
 
 // eslint-disable-next-line func-style
 async function main() {
     try {
-        console.log('argumentsArr 1-----', argumentsArr);
+        console.log('argumentsArr 1-----', process.argv);
         const argumentsArr = process.argv.slice(2);
         console.log('argumentsArr-----', argumentsArr);
         if(!argumentsArr.length) {
@@ -235,14 +237,11 @@ async function main() {
             const isRootFile = fs.readdirSync(CURR_DIR).find(file => file === 'calmapi.json');
             if(!isRootFile) {
                 throw new Error('Please Run inside a calmapi Project.');
-            }else {
-                if( argumentsArr[ 3 ].includes('.xlsx') ) {
-                    const schema = await generateModel(argumentsArr[ 3 ])
-                    await moduleGenerator(argumentsArr[ 2 ], false, schema);
-                } else {
-                    await moduleGenerator(argumentsArr[ 2 ]);
-                }
-
+            }else if( argumentsArr[ 3 ] && argumentsArr[ 3 ].includes('.xlsx') ) {
+                const schema = await generateModel(argumentsArr[ 3 ]);
+                await moduleGenerator(argumentsArr[ 2 ], false, schema);
+            } else {
+                await moduleGenerator(argumentsArr[ 2 ]);
             }
         }else if(argumentsArr.length === 4 && argumentsArr[ 0 ] === 'generate' && argumentsArr[ 1 ] === 'module' && argumentsArr[ 3 ] === '--force') {
             const isRootFile = fs.readdirSync(CURR_DIR).find(file => file === 'calmapi.json');

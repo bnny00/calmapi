@@ -6,21 +6,7 @@ const uniqueValidator = require( 'mongoose-unique-validator' );
 class MODULE_SINGULAR_PASCAL {
 
     initSchema() {
-        const schema = new Schema( {
-            'IMO_No': {
-                'type': String,
-                'required': true,
-            },
-            MODULE_SCHEMA,
-            'createdBy': {
-                'type': Schema.Types.ObjectId,
-                'ref': 'user'
-            },
-            'updatedBy': {
-                'type': Schema.Types.ObjectId,
-                'ref': 'user'
-            },
-        }, { 'timestamps': true } );
+        const schema = new Schema(MODULE_SCHEMA, { 'timestamps': true } );
 
         schema.plugin( uniqueValidator );
         try {

@@ -68,7 +68,7 @@ class MODULE_SINGULAR_PASCALController extends CalmController {
                 req.body.updatedBy = req.user._id;
             }
 
-            const response = await this.service.update( id, req.body )
+            const response = await this.service.update( id, req.body );
 
             res.sendCalmResponse( response.data );
         } catch (e) {
@@ -89,34 +89,6 @@ class MODULE_SINGULAR_PASCALController extends CalmController {
         } catch (e) {
             next(e);
         }
-    }
-
-    async pdfExport(req, res, next) {
-        const { id } = req.params;
-        const localtz = req.query.timezone || 'UTC';
-        try {
-            
-            const response = await this.service.singleGetForPdf( id );
-            const filterData = new this.dto.PrintDTO( response.data );
-            const parsedData = JSON.parse(JSON.stringify(filterData));
-            const IMO_No = req.user.IMO_No;
-            parsedData.imageUrl = `http://localhost:${config.PORT}/`;
-
-            // Amazon Link
-            parsedData.amazonLink = process.env.BUCKETlINK;
-
-            // Mention Handlebars File Name
-            parsedData.type = '';
-
-            // Pass Local Timzone
-            parsedData.localtz = localtz;
-
-            const fields = [];
-
-        } catch( e ) {
-            next( e );
-        }
-
     }
 
 }

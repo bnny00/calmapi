@@ -97,22 +97,6 @@ class MODULE_SINGULAR_PASCALService extends CalmService {
         }
     }
 
-    async singleGetForPdf( id ) {
-        try {
-            const item = await this.model.findById( id ).populate( this.populateFields );
-            
-            if( !item ) {
-                throw new Error('NOT_FOUND_ERROR');
-            }
-            
-            const parsedItem = JSON.parse(JSON.stringify(item));
-            
-            return { 'data': parsedItem };
-
-        } catch( errors ) {
-            throw errors;
-        }
-    }
 }
 
 module.exports = { MODULE_SINGULAR_PASCALService };
