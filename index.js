@@ -205,19 +205,38 @@ async function generateModel(file) {
 
         const sheet = wb.worksheets[ 0 ];
         const result = {};
+        const inspectionData = {};
 
         sheet.eachRow((row, rowNumber) => {
             if(rowNumber !== 1) {
                 const cellValue = row.getCell(2).value;
+                const unit = row.getCell(7)?.value;
             
-                if (cellValue) {
-                    result[ cellValue ] = {
-                        type: 'String',
-                        required: false,
-                    };
+                if( !unit ) {
+                    if (cellValue) {
+                        result[ cellValue ] = {
+                            type: 'String',
+                            required: false,
+                        };
+                    }
+                } else if( unit ) {
+                    if (cellValue) {
+                        inspectionData[ cellValue ] = {
+                            type: 'String',
+                            required: false,
+                        };
+                    }
                 }
             }
         });
+
+        if (Object.keys(inspectionData).length > 0) {
+            inspectionData[ 'Unit' ] = {
+                type: 'String',
+                required: false,
+            };
+            result[ 'InspectionData' ] = [ inspectionData ];
+        }
         
         return result;
     } catch (e) {
