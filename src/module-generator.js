@@ -53,7 +53,7 @@ const modelJsonFormatting = function(schema) {
         'type': 'Schema.Types.ObjectId',
         'ref': 'user'
     } };
-    const jsonSchema = JSON.stringify(newSchema, null, '\t').replace(/\n\t/g, '\n\t\t\t').replace(/\"/g, '\'').replace(/\t/g, '    ');
+    const jsonSchema = JSON.stringify(newSchema, null, '\t').replace(/\n\t/g, '\n\t\t\t').replace(/\"/g, '\'').replace(/\t/g, '    ').replace(/'Schema.Types.ObjectId'/g, 'Schema.Types.ObjectId');
 
     // let newschmea = jsonSchema.slice(3, jsonSchema.length - 1);
 
