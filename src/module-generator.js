@@ -45,7 +45,17 @@ const modelJsonFormatting = function(schema) {
     const newSchema = { ...schema, 'IMO_No': {
         'type': 'String',
         'required': true,
-    }, 'createdBy': {
+    },
+    'offlineReportUniqueID': {
+        'type': 'String',
+        'required': true,
+    },
+    'DateTimeToBeFormatted': {
+        'type': Boolean,
+        'required': false,
+        'default': false
+    },
+    'createdBy': {
         'type': 'Schema.Types.ObjectId',
         'ref': 'user'
     },
